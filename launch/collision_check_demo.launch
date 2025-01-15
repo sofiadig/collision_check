@@ -1,18 +1,28 @@
 <launch>
-  <!-- Load the robot model -->
-  <param name="fake/robot_description" value="src/moveit/isaac_firefly_adaptation/urdf/fake_firefly.urdf"/>
+  <!-- Load URDF -->
+  <param name="robot_description" textfile="$(find isaac_firefly_adaptation)/urdf/fake_firefly.urdf"/>
+
+  <!-- Load SRDF -->
+  <param name="robot_description_semantic" textfile="$(find isaac_firefly_adaptation)/config/my_fake_robot.srdf"/>
+
 
   <!-- Launch move_group for planning -->
-  <include file="$(find isaac_firefly_adaptation)/launch/demo.launch"/>
-  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />
+  
+  <!-- node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" -->
 
   <!-- Launch the collision checker node -->
-  <node name="collision_check" pkg="collision_check" type="collision_check_node" output="screen" respawn="true">
+  <group ns="fake">
+    <node pkg="collision_check" name="collision_check" type="collision_check_node" output="screen" respawn="true"/>
     <param name="robot_mesh_path" value="$(find isaac_firefly_adaptation)/meshes/firefly.dae"/>
-  </node>
+  </group>
+
+  <include file="$(find isaac_firefly_adaptation)/launch/demo.launch"/>
 
   <!-- Launch RViz with custom configuration -->
-  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find collision_check)/config/collision_check.rviz"/>
-
+  <!-- node name="rviz" pkg="rviz" type="rviz" args="-d $(find collision_check)/config/collision_check.rviz"/> -->
+  <!-- Run RViz with a custom config -->
+  <node name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false"
+        args="-d $(find collision_check)/config/collision_check.rviz" output="screen">
+  </node>
 
 </launch>
