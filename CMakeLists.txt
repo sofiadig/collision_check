@@ -17,7 +17,21 @@ find_package(catkin REQUIRED COMPONENTS
         moveit_visual_tools
         message_generation
         moveit_core
-        )
+        interactive_markers
+        rviz_visual_tools
+        geometric_shapes
+        moveit_tutorials
+)
+
+find_library(INTERACTIVITY_UTILS_LIBRARY
+    NAMES interactivity_utils
+    PATHS ${moveit_tutorials_PREFIX}/lib
+    NO_DEFAULT_PATH
+)
+
+if(NOT INTERACTIVITY_UTILS_LIBRARY)
+    message(FATAL_ERROR "interactivity_utils library not found!")
+endif()
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -110,7 +124,16 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
           INCLUDE_DIRS include
           LIBRARIES collision_check
-          CATKIN_DEPENDS  roscpp sensor_msgs std_msgs geometry_msgs message_runtime
+          CATKIN_DEPENDS
+            roscpp
+            sensor_msgs
+            std_msgs
+            geometry_msgs
+            message_runtime
+            moveit_core
+            moveit_visual_tools
+            moveit_ros_planning_interface
+            interactive_markers
         #  DEPENDS system_lib
 )
 
@@ -121,9 +144,10 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-         include
+        include
         ${catkin_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIR}
+        ${moveit_tutorials_INCLUDE_DIRS}
 )
 
 ## Declare a C++ library
@@ -136,6 +160,9 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/collision_check.cpp)
+add_executable(object_collision_visual
+  src/object_collision_visual.cpp
+)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -157,6 +184,14 @@ target_link_libraries(${PROJECT_NAME}_node
         ${catkin_LIBRARIES}
         ${Boost_LIBRARIES}
         )
+
+target_link_libraries(object_collision_visual
+        ${interactive_markers_LIBRARIES}
+        ${moveit_tutorials_LIBRARIES}
+        ${INTERACTIVITY_UTILS_LIBRARY}
+        ${catkin_LIBRARIES}
+        ${Boost_LIBRARIES}
+      )
 
 #############
 ## Install ##
@@ -185,6 +220,13 @@ target_link_libraries(${PROJECT_NAME}_node
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 # )
+
+install(
+  TARGETS
+  object_collision_visual
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 ## Mark cpp header files for installation
 # install(DIRECTORY include/${PROJECT_NAME}/
