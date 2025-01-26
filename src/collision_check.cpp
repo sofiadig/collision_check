@@ -2,6 +2,8 @@
 
 #include "collision_check/collision_check.h"
 #include <filesystem>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
+#include <moveit_msgs/CollisionObject.h>
 
 void CollisionChecker::randomize_position(double& x, double& y, double& z, double& yaw) {
 	x = dis_x(gen);

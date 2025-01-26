@@ -1,0 +1,8 @@
+<launch>
+    <include file="$(find panda_moveit_config)/launch/demo.launch">
+        <arg name="use_rviz" default="false" />
+  </include>
+  <include file="$(find panda_moveit_config)/launch/moveit_rviz.launch">
+    <arg name="rviz_config" value="$(find collision_check)/config/two_objects_basic.rviz" />
+  </include>
+</launch>

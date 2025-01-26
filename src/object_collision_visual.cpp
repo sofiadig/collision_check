@@ -46,9 +46,13 @@
 #include <moveit/robot_state/robot_state.h>
 #include <moveit/planning_scene/planning_scene.h>
 #include <moveit/collision_detection/collision_tools.h>
+#include <moveit/robot_model/robot_model.h>
+#include <moveit/planning_scene_interface/planning_scene_interface.h>
+#include <moveit/move_group_interface/move_group_interface.h>
 
 planning_scene::PlanningScene* g_planning_scene = nullptr;
 shapes::ShapePtr g_world_cube_shape;
+shapes::ShapePtr g_world_cylinder_shape;
 ros::Publisher* g_marker_array_publisher = nullptr;
 visualization_msgs::MarkerArray g_collision_points;
 
@@ -94,9 +98,11 @@ void computeCollisionContactPoints(InteractiveRobot& robot)
 {
   // move the world geometry in the collision world
   Eigen::Isometry3d world_cube_pose;
+  Eigen::Isometry3d cylinder_pose;
   double world_cube_size;
   robot.getWorldGeometry(world_cube_pose, world_cube_size);
   g_planning_scene->getWorldNonConst()->moveShapeInObject("world_cube", g_world_cube_shape, world_cube_pose);
+  g_planning_scene->getWorldNonConst()->moveShapeInObject("world_cylinder", g_world_cylinder_shape, cylinder_pose);
 
   // BEGIN_SUB_TUTORIAL computeCollisionContactPoints
   //
@@ -157,6 +163,42 @@ void computeCollisionContactPoints(InteractiveRobot& robot)
   }
 }
 
+moveit_msgs::CollisionObject createObject(const ros::NodeHandle& pnh) {
+  std::string object_reference_frame = "panda_link0";
+	std::vector<double> object_dimensions = {0.25, 0.02};
+	geometry_msgs::Pose pose;// = {0.6, 0.5, 1.1, 0, 0, 0};
+
+	moveit_msgs::CollisionObject object;
+	object.id = "world_cylinder";
+	object.header.frame_id = "panda_link0";
+	object.primitives.resize(1);
+	object.primitives[0].type = shape_msgs::SolidPrimitive::CYLINDER;
+	object.primitives[0].dimensions.resize(2);
+  object.primitives[0].dimensions[0] = 0.5;   // height
+  object.primitives[0].dimensions[1] = 0.1;   // radius
+  object.primitives[0].dimensions = object_dimensions;
+  pose.position.x = 0.6;
+  pose.position.y = 0.5;
+  pose.position.z = 1.1;
+  pose.orientation.w = 1.0;
+  // pose.orientation.x = 0;
+  // pose.orientation.y = 0;
+  // pose.orientation.z = 0;
+	object.primitive_poses.push_back(pose);
+  object.operation = object.ADD;
+	return object;
+}
+
+void setupSceneObject(ros::NodeHandle& pnh) {
+	// Add object to planning scene
+	ros::Duration(1.0).sleep();  // Wait for ApplyPlanningScene service
+	//moveit::planning_interface::PlanningSceneInterface psi;
+  moveit_msgs::CollisionObject newCylinder = createObject(pnh);
+
+  // if (!psi.applyCollisionObject(newCylinder))
+	// 	throw std::runtime_error("Failed to spawn object: " + newCylinder.id);
+}
+
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "visualizing_collisions_tutorial");
@@ -170,16 +212,67 @@ int main(int argc, char** argv)
   // object as a wrapper that combines a robot_model with the cube and an interactive marker. We also
   // create a :planning_scene:`PlanningScene` for collision checking. If you haven't already gone through the
   // `planning scene tutorial <../planning_scene/planning_scene_tutorial.html>`_, you go through that first.
+  
+
   InteractiveRobot robot;
   /* Create a PlanningScene */
   g_planning_scene = new planning_scene::PlanningScene(robot.robotModel());
 
-  // Adding geometry to the PlanningScene
+  // Adding first geometry (cube) to the PlanningScene
   Eigen::Isometry3d world_cube_pose;
   double world_cube_size;
   robot.getWorldGeometry(world_cube_pose, world_cube_size);
   g_world_cube_shape.reset(new shapes::Box(world_cube_size, world_cube_size, world_cube_size));
   g_planning_scene->getWorldNonConst()->addToObject("world_cube", g_world_cube_shape, world_cube_pose);
+
+  // //setupSceneObject(nh);
+
+  // // Add the cylinder object to the scene message
+  // moveit_msgs::CollisionObject cylinder = createObject(nh);
+  // planning_scene_msg.world.collision_objects.push_back(cylinder);
+  // planning_scene_msg.is_diff = true;
+
+  // // Publish the scene update
+  // planning_scene_diff_publisher.publish(planning_scene_msg);
+  // ros::Duration(10).sleep();
+
+  // Publish the scene update
+  //planning_scene_diff_publisher.publish(g_planning_scene);
+
+  // // Adding second geometry (cylinder) to the PlanningScene
+  // Eigen::Isometry3d cylinder_pose;
+  // cylinder_pose.setIdentity();
+  // // Position the cylinder at x=0.5, y=0.5, z=0.5
+  // cylinder_pose.translation() = Eigen::Vector3d(0.5, 0.5, 0.5);
+  // // Create a cylinder with radius 0.1 and height 0.3
+  // g_world_cylinder_shape.reset(new shapes::Cylinder(0.1, 0.3));
+  // g_planning_scene->getWorldNonConst()->addToObject("world_cylinder", g_world_cylinder_shape, cylinder_pose);
+
+  // // After adding cylinder to planning scene
+  // visualization_msgs::Marker cylinder_marker;
+  // cylinder_marker.header.frame_id = "panda_link0";
+  // cylinder_marker.header.stamp = ros::Time::now();
+  // cylinder_marker.ns = "world_cylinder";
+  // cylinder_marker.id = 1;  // Different ID from cube which is 0
+  // cylinder_marker.type = visualization_msgs::Marker::CYLINDER;
+  // cylinder_marker.action = visualization_msgs::Marker::ADD;
+  // cylinder_marker.pose.position.x = cylinder_pose.translation().x();
+  // cylinder_marker.pose.position.y = cylinder_pose.translation().y();
+  // cylinder_marker.pose.position.z = cylinder_pose.translation().z();
+  // cylinder_marker.pose.orientation.w = 1.0;
+  // cylinder_marker.scale.x = 0.1;  // diameter
+  // cylinder_marker.scale.y = 0.1;  // diameter
+  // cylinder_marker.scale.z = 0.5;  // height
+  // cylinder_marker.color.r = 0.0;
+  // cylinder_marker.color.g = 1.0;
+  // cylinder_marker.color.b = 0.0;
+  // cylinder_marker.color.a = 0.7;
+  // cylinder_marker.lifetime = ros::Duration(0);  // persistent
+
+  // // Create a marker array and publish
+  // visualization_msgs::MarkerArray markers;
+  // markers.markers.push_back(cylinder_marker);
+  
 
   // CALL_SUB_TUTORIAL computeCollisionContactPoints
   // END_TUTORIAL

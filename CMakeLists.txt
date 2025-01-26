@@ -193,6 +193,12 @@ target_link_libraries(object_collision_visual
         ${Boost_LIBRARIES}
       )
 
+add_executable(two_objects_basic src/two_objects_basic.cpp)
+target_link_libraries(two_objects_basic ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+install(TARGETS two_objects_basic DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
 #############
 ## Install ##
 #############
@@ -254,3 +260,6 @@ install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
+
+# From Planning Scene Tutorial
+
