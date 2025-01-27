@@ -10,7 +10,7 @@
 
   <!-- Run RViz with a custom config -->
   <node name="$(anon rviz)" pkg="rviz" type="rviz" respawn="false"
-        args="-d $(find moveit_tutorials)/doc/visualizing_collisions/launch/moveit.rviz" output="screen">
+        args="-d $(find collision_check)/config/two_objects_basic.rviz" output="screen">
     <rosparam command="load" file="$(find panda_moveit_config)/config/kinematics.yaml" subst_value="true"/>
   </node>
 
@@ -18,7 +18,7 @@
   <node pkg="tf2_ros" type="static_transform_publisher" name="virtual_joint_broadcaster_0" args="0 0 0 0 0 1 /world/panda_link0 /panda_link0 10" />
 
   <!-- launch interactivity_tutorial -->
-  <node name="object_collision_visual" pkg="collision_check" type="object_collision_visual" respawn="false" output="screen">
+  <node name="two_objects_basic" pkg="collision_check" type="two_objects_basic" respawn="false" output="screen">
     <rosparam command="load" file="$(find panda_moveit_config)/config/kinematics.yaml" subst_value="true"/>
   </node>
 

@@ -100,8 +100,8 @@ int main(int argc, char** argv)
   InteractiveRobot robot;
   g_planning_scene = new planning_scene::PlanningScene(robot.robotModel());
 
-  moveit_visual_tools::MoveItVisualTools visual_tools("panda_link0");
-  visual_tools.deleteAllMarkers();
+  // moveit_visual_tools::MoveItVisualTools visual_tools("panda_link0");
+  // visual_tools.deleteAllMarkers();
 
   // robot_model_loader::RobotModelLoader robot_model_loader("robot_description");
   // const moveit::core::RobotModelPtr& kinematic_model = robot_model_loader.getModel();
@@ -183,17 +183,18 @@ int main(int argc, char** argv)
   color2.color.a = 0.5f;
 
   ROS_INFO("Adding the second object into the world at the location of the hand.");
+  //moveit_msgs::PlanningScene m_planning_scene;
   m_planning_scene.world.collision_objects.push_back(cylinder.object);
   m_planning_scene.object_colors.push_back(color2);
   m_planning_scene.is_diff = true;
   planning_scene_diff_publisher.publish(m_planning_scene);
-  //visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+  // visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
 
 //################################################################################
 
   ROS_INFO("Starting collision detection.");
   //InteractiveRobot robot;
-  g_planning_scene->usePlanningSceneMsg(m_planning_scene);
+  //g_planning_scene->usePlanningSceneMsg(m_planning_scene);
 
   // Create a marker array publisher for publishing contact points
   g_marker_array_publisher =

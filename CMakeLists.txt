@@ -163,9 +163,7 @@ include_directories(
 ## With catkin_make all packages are built within a single CMake context
 ## The recommended prefix ensures that target names across packages don't collide
 add_executable(${PROJECT_NAME}_node src/collision_check.cpp)
-add_executable(object_collision_visual
-  src/object_collision_visual.cpp
-)
+add_executable(object_collision_visual src/object_collision_visual.cpp)
 
 ## Add cmake target dependencies of the library
 ## as an example, code may need to be generated before libraries
@@ -205,13 +203,17 @@ target_link_libraries(two_objects_basic
         ${INTERACTIVITY_UTILS_LIBRARY}
         #interactivity_utils
       )
-install(TARGETS two_objects_basic DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
-install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
 
 #############
 ## Install ##
 #############
+
+install(TARGETS object_collision_visual DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+install(TARGETS two_objects_basic DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
 # all install targets should use catkin DESTINATION variables
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
@@ -236,11 +238,6 @@ install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 #   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
 #   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 # )
-
-install(
-  TARGETS
-  object_collision_visual
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
 
