@@ -134,6 +134,7 @@ catkin_package(
             moveit_visual_tools
             moveit_ros_planning_interface
             interactive_markers
+            moveit_tutorials
         #  DEPENDS system_lib
 )
 
@@ -145,6 +146,8 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
         include
+        moveit_tutorials_INCLUDE_DIRS
+        /home/sdg/ws_moveit/src/moveit_tutorials/doc/interactivity/include
         ${catkin_INCLUDE_DIRS}
         ${Boost_INCLUDE_DIR}
         ${moveit_tutorials_INCLUDE_DIRS}
@@ -194,7 +197,11 @@ target_link_libraries(object_collision_visual
       )
 
 add_executable(two_objects_basic src/two_objects_basic.cpp)
-target_link_libraries(two_objects_basic ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+target_link_libraries(two_objects_basic
+        ${catkin_LIBRARIES}
+        ${Boost_LIBRARIES}
+        interactivity_utils
+      )
 install(TARGETS two_objects_basic DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 install(DIRECTORY launch DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})

@@ -26,6 +26,7 @@
   <build_depend>moveit_ros_perception</build_depend>
   <build_depend>geometric_shapes</build_depend>
   <build_depend>moveit_tutorials</build_depend>
+  <depend>interactivity_utils</depend>
   <build_export_depend>moveit_msgs</build_export_depend>
   <build_export_depend>moveit_ros_planning_interface</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
