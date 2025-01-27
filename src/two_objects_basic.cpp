@@ -93,7 +93,7 @@ int main(int argc, char** argv)
   ros::init(argc, argv, "two_objects_basic");
   std::cout << "Let's initialize a scene with one panda robot and two collision objects.";
   ros::AsyncSpinner spinner(1);
-  spinner.start();
+  //spinner.start();
 
   ros::NodeHandle node_handle;
 
@@ -113,7 +113,7 @@ int main(int argc, char** argv)
   {
     sleep_t.sleep();
   }
-  visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to start the demo");
+  //visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to start the demo");
 
   // --------------Add first object: Box -------------------
   moveit_msgs::AttachedCollisionObject box;
@@ -136,12 +136,21 @@ int main(int argc, char** argv)
   box.object.primitive_poses.push_back(pose);
   box.object.operation = box.object.ADD;
 
+  moveit_msgs::ObjectColor color;
+  color.id = "box";
+  color.color.r = 0.0f; // Blue
+  color.color.g = 0.0f;
+  color.color.b = 1.0f;
+  color.color.a = 0.5f; // 50% transparent
+  
+
   ROS_INFO("Adding the first object into the world at the location of the hand.");
   moveit_msgs::PlanningScene m_planning_scene;
   m_planning_scene.world.collision_objects.push_back(box.object);
+  m_planning_scene.object_colors.push_back(color);
   m_planning_scene.is_diff = true;
   planning_scene_diff_publisher.publish(m_planning_scene);
-  visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+  //visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
 
   // --------------Add second object: Cylinder -------------------
 
@@ -166,12 +175,19 @@ int main(int argc, char** argv)
   cylinder.object.primitive_poses.push_back(pose2);
   cylinder.object.operation = cylinder.object.ADD;
 
+  moveit_msgs::ObjectColor color2;
+  color2.id = "cylinder";
+  color2.color.r = 0.0f; // Blue
+  color2.color.g = 1.0f;
+  color2.color.b = 0.0f;
+  color2.color.a = 0.5f;
+
   ROS_INFO("Adding the second object into the world at the location of the hand.");
-  //moveit_msgs::PlanningScene m_planning_scene;
   m_planning_scene.world.collision_objects.push_back(cylinder.object);
+  m_planning_scene.object_colors.push_back(color2);
   m_planning_scene.is_diff = true;
   planning_scene_diff_publisher.publish(m_planning_scene);
-  visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
+  //visual_tools.prompt("Press 'next' in the RvizVisualToolsGui window to continue the demo");
 
 //################################################################################
 
