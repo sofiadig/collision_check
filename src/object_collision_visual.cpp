@@ -54,6 +54,7 @@ void computeCollisionContactPoints(InteractiveRobot& robot)
 
   // Collision Requests
   collision_detection::CollisionRequest c_req;
+  collision_detection::CollisionResult c_res_robot;
   collision_detection::CollisionResult c_res;
   c_req.group_name = robot.getGroupName();
   c_req.contacts = true;
@@ -62,8 +63,8 @@ void computeCollisionContactPoints(InteractiveRobot& robot)
   c_req.verbose = false;
 
   // Checking for Collisions
-  g_planning_scene->checkCollision(c_req, c_res, *robot.robotState());
-  g_planning_scene->getCollisionEnv()->checkCollisionBetweenObjectGroups(object_group1, object_group2);
+  g_planning_scene->checkCollision(c_req, c_res_robot, *robot.robotState());
+  c_res = g_planning_scene->getCollisionEnv()->checkCollisionBetweenObjectGroups(object_group1, object_group2);
 
   if (c_res.collision)
   {
