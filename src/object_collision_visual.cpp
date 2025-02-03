@@ -104,8 +104,8 @@ int main(int argc, char** argv)
 
 //################################################################################
 
-  Eigen::Isometry3d cylinder_pose = Eigen::Isometry3d::Identity();
-  cylinder_pose.translation() = Eigen::Vector3d(0.3, -0.5, 0.5);
+  Eigen::Isometry3d cylinder_pose = Eigen::Isometry3d(Eigen::Translation3d(0.25, -0.5, 0.5));
+  //cylinder_pose.translation() = Eigen::Vector3d(0.0, -0.5, 0.0);
 
   // Define the shape using shapes::Cylinder
   double cylinder_height = 0.4;
