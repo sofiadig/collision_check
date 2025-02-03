@@ -47,6 +47,11 @@ void computeCollisionContactPoints(InteractiveRobot& robot)
   robot.getWorldGeometry(world_cube_pose, world_cube_size);
   g_planning_scene->getWorldNonConst()->moveShapeInObject("world_cube", g_world_cube_shape, world_cube_pose);
 
+  std::vector<std::string> object_group1;
+	std::vector<std::string> object_group2;
+  object_group1.push_back("world_cube");
+  object_group2.push_back("cylinder");
+
   // Collision Requests
   collision_detection::CollisionRequest c_req;
   collision_detection::CollisionResult c_res;
@@ -58,6 +63,7 @@ void computeCollisionContactPoints(InteractiveRobot& robot)
 
   // Checking for Collisions
   g_planning_scene->checkCollision(c_req, c_res, *robot.robotState());
+  g_planning_scene->getCollisionEnv()->checkCollisionBetweenObjectGroups(object_group1, object_group2);
 
   if (c_res.collision)
   {
@@ -105,7 +111,6 @@ int main(int argc, char** argv)
 //################################################################################
 
   Eigen::Isometry3d cylinder_pose = Eigen::Isometry3d(Eigen::Translation3d(0.25, -0.5, 0.5));
-  //cylinder_pose.translation() = Eigen::Vector3d(0.0, -0.5, 0.0);
 
   // Define the shape using shapes::Cylinder
   double cylinder_height = 0.4;
